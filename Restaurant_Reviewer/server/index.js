@@ -44,20 +44,22 @@ app.post('/login', (req,res) => {
     })
 })
 
-app.get('/restaurants', async (req, res) => {
- 
-  try{
-    const restaurants = await Restaurant.find();
-   // res.status(200).json({ error: 'Something went wrong' });
-    res.json(restaurants);
-  }
-  catch(err)
-  {
-    console.log(err)
+  app.get('/restaurants', async (req, res) => {
+    try {
+      const { category } = req.query;
 
-  }
-  
+      // If a category filter is provided, filter by category, else get all restaurants
+      const query = category ? { category } : {};
+
+      const restaurants = await Restaurant.find(query);
+
+      res.json(restaurants);
+    } catch (err) {
+      console.log(err);
+    }
   });
+
+
 
 
 

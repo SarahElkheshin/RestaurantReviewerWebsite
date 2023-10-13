@@ -35,6 +35,11 @@ const restaurantSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+
+  category: {
+    type: String,
+    required: true,
+  },
 });
 
 const Restaurant = mongoose.model('Restaurant', restaurantSchema);
