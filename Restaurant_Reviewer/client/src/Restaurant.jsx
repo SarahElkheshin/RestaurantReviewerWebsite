@@ -7,6 +7,8 @@ function Restaurant() {
   const [restaurants, setRestaurants] = useState([]);
   const [category, setCategory] = useState('all'); // Default to 'all' category
   const [comments, setComments] = useState({});
+  const [feedbacks, setFeedbacks] = useState({});  // Add this line
+
 
   useEffect(() => {
     axios.get('http://localhost:3001/restaurants')
@@ -38,7 +40,31 @@ function Restaurant() {
 
   const handleSubmit = async (e, restaurantId) => {
     e.preventDefault();
+//ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+const commentText = comments[restaurantId];
 
+  // Update local state
+  setComments({
+    ...comments,
+    [restaurantId]: "",
+  });
+
+  // Send the comment to the server
+  try {
+    const response = await axios.post(`http://localhost:3001/feedbacks`, {
+      restaurantId,
+      comment: commentText,
+    });
+
+    // Update MongoDB collection
+    setFeedbacks({
+      ...feedbacks,
+      [response.data._id]: response.data,
+    });
+  } catch (error) {
+    console.error('Error submitting comment:', error);
+  }
+//ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
     var myHeaders = new Headers();
     myHeaders.append("apikey", "USkeTl8EQKqJCavRABKkLaVQ61j0R6aJ");
     
@@ -112,13 +138,19 @@ function Restaurant() {
   });
 
   return (
-    <div className="d-flex flex-column align-items-center bg-secondary vh-100">
-      <div className="bg-white p-3 rounded w-75">
+    <div className="d-flex flex-column align-items-center bg-custom vh-100">
+      <div className="bg-customfront p-3 rounded w-75">
+        <img className="logo" src='./src/assets/logo.png'/>
+      <h2 className="heading">Restaurant Reviewer</h2>
         <div className="topnav">
           <Link to="/home" className="active">Home</Link>
           <Link to="/dashboard">Dashboard</Link>
+          <div className="topnav-right">
+               <Link to="/login">Login</Link>
+               <Link to="/register">Register</Link>
+             </div>
         </div>
-        <h2>Restaurant List</h2>
+       
 
         {/* Category Selection */}
         <div className="category-selection">
@@ -132,24 +164,41 @@ function Restaurant() {
         </div>
 
         {/* Restaurants */}
-        <div className="row row-cols-1 row-cols-md-2 g-4">
+        <div className="row row-cols-1 row-cols-md-4 g-4">
           {filteredRestaurants.map((restaurant, index) => (
             <div key={index} className="col">
               <div className="card">
                 <img src={restaurant.image} className="card-img-top h-100" alt={restaurant.name} />
                 <div className="card-body">
                   <h5 className="card-title">{restaurant.name}</h5>
-                  <p className="card-text">
-                    Positive Comments: {restaurant.TotalPositiveComments}
-                    <br />
-                    Neutral Comments: {restaurant.TotalNeutralComments}
-                    <br />
-                    Negative Comments: {restaurant.TotalNegativeComments}
-                  </p>
+                
+                  {/* <p className="card-text">
+                  <img src='./src/assets/positive.png' className="emoji"/> {restaurant.TotalPositiveComments}
+                    <img src='./src/assets/neutral.png' className="emoji"/> {restaurant.TotalNeutralComments}
+                    <img src='./src/assets/negative.png' className="emoji"/> {restaurant.TotalNegativeComments}
+                  </p> */}
+                <div id="design-cast">
+                    <div className="member">
+                         <img src='./src/assets/positive.png' className="img-responsive img-thumbnail emoji" alt="Responsive image" />
+                         <div className="name">Positive
+                           <br />{restaurant.TotalPositiveComments}</div>
+                    </div>
+                   <div className="member">
+                          <img src='./src/assets/neutral.png' className="img-responsive img-thumbnail emoji" alt="Responsive image" />
+                          <div className="name">Neutral
+                             <br />{restaurant.TotalNeutralComments}</div>
+                    </div>
+                    <div className="member">
+                          <img src='./src/assets/negative.png' className="img-responsive img-thumbnail emoji" alt="Responsive image" />
+                          <div className="name">Negative
+                             <br />{restaurant.TotalNegativeComments}</div>
+                    </div>
+                  </div>
+                   
 
                   <form method="post" onSubmit={(e) => handleSubmit(e, restaurant._id)} >
-                    <textarea name="comment" id="" className="form-control" rows="4" placeholder="Enter your comment here"  onChange={(e) => handleChange(e, restaurant._id)} value={comments[restaurant._id]} />
-                    <button type="submit" className="btn btn-primary mt-3">Submit</button>
+                    <textarea name="comment" id="" className="card-textarea" rows="4" placeholder="Enter your comment here"  onChange={(e) => handleChange(e, restaurant._id)} value={comments[restaurant._id]} />
+                    <button type="submit" className="btn-primary mt-3">Submit</button>
                   </form>
 
                 </div>

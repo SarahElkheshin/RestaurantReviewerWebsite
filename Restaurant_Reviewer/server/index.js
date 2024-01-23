@@ -5,6 +5,7 @@ const UserModel =require('./models/User')
 const Restaurant = require('./models/Restaurant'); // Import the Restaurant model
 const bodyParser = require ('body-parser')
 const app = express()
+const Feedbacks = require('./models/Feedback');  // Adjust the import path
 
 app.use(express.json()); // transfer fata from frontend to backend in json format
 app.use(cors());
@@ -59,7 +60,23 @@ app.post('/login', (req,res) => {
     }
   });
 
+//myadddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+app.post('/feedbacks', async (req, res) => {
+  const { restaurantId, comment } = req.body;
 
+  const newFeedback = new Feedbacks({
+    restaurantId,
+    comment,
+  });
+
+  try {
+    const savedFeedback = await newFeedback.save();
+    res.json(savedFeedback);
+  } catch (error) {
+    res.status(500).json({ error: 'Error saving feedback' });
+  }
+});
+//myadddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
 
 
 

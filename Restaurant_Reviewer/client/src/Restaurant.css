@@ -1,7 +1,34 @@
+.bg-custom {
+
+  background: rgb(176,171,132);
+background: radial-gradient(circle, rgba(176,171,132,1) 0%, rgba(199,192,137,1) 50%);
+}
+
+.bg-customfront
+{
+  background-color: #beb788 ;
+}
+
+.logo {
+  width: 150px; /* Adjust the width as needed */
+  height: auto; /* Maintain aspect ratio */
+  display: block; /* Center the logo */
+  margin: 0 auto; /* Center the logo horizontally */
+}
+
+.heading
+{
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  color: #f2f2f2;
+text-align: center;
+  font-size: 40px;
+  border-bottom: 2px solid white;
+}
 /* Add a black background color to the top navigation */
 .topnav {
-    background-color: #333;
+    background-color: #beb788;
     overflow: hidden;
+    border-bottom: 2px solid white; /* Add a white line below the navigation bar */
   }
   
   /* Style the links inside the navigation bar */
@@ -9,22 +36,29 @@
     float: left;
     color: #f2f2f2;
     text-align: center;
-    padding: 14px 16px;
+    padding: 14px 50px;
     text-decoration: none;
-    font-size: 17px;
+    font-size: 20px;
+    font-family:"Garamond";
   }
   
   /* Change the color of links on hover */
   .topnav a:hover {
-    background-color: #ddd;
+    background-color: #f5eeee;
     color: black;
   }
   
   /* Add a color to the active/current link */
   .topnav a.active {
-    background-color: #007bff;
+    background-color: #beb788;
     color: white;
   }
+
+  .topnav-right {
+    margin-left: 780px;
+    margin-right: 0%;
+  }
+  
 
   .restaurant-container {
     display: flex;
@@ -46,10 +80,10 @@
     color: #333;
   }
   
-  .restaurant-row {
+  .row {
     display: flex;
     overflow-x: auto; /* Add horizontal scroll when needed */
-    width: 100%;
+    width: 130%;
     gap: 20px;
     padding: 20px 0;
     box-sizing: border-box;
@@ -57,32 +91,40 @@
   }
   
   
-  .restaurant-card {
-    width: 280px;
+  .card {
+    width: 300px;
+    height: 350px;
     border: 1px solid #ddd;
-    background-color: #fff;
+    background-color: #b0ab84;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 10px;
     text-align: center;
   }
   
-  .restaurant-card img {
+  .card-img {
     max-width: 100%;
     height: auto;
   }
   
-  .restaurant-card h5 {
+  .card-title {
     font-size: 18px;
     margin: 10px 0;
+    color: #ffffff;
+    font-family: "Lucida Bright";
   }
   
-  .restaurant-card .card-text {
+  .card-text {
     font-size: 16px;
-    color: #666;
+    color: #ffffff;
   }
   
-  .restaurant-card textarea {
+  .emoji
+  {
+    width:30px ;
+    height: 30px;
+  }
+  .card-textarea {
     width: 100%;
     height: 100px;
     resize: none;
@@ -92,20 +134,46 @@
     border-radius: 4px;
   }
   
-  .restaurant-card button {
-    background-color: #007bff;
-    color: #fff;
+ 
+  
+  .btn-primary:hover {
+    background-color: #b0ab84;
+  }
+  
+  .btn-primary {
+    margin: 10px 0;
+    background-color: rgb(176,171,132);
+    color: hsl(0, 0%, 100%);
     border: none;
     border-radius: 4px;
     padding: 10px 20px;
     cursor: pointer;
   }
-  
-  .restaurant-card button:hover {
-    background-color: #0056b3;
+
+
+  #design-cast {
+    display: flex;
+    flex-wrap: wrap;
   }
   
-  .btn-primary {
-    margin: 10px 0;
+  .member {
+    flex: 0 30%;
+    margin: 1% 1% 45px 1%;
   }
   
+  .member img {
+    max-width: 100%;
+    display: block;
+  }
+  .name {
+    position: absolute;
+    bottom: 0px;
+    font-size: 8px;
+    color: #ffffff;
+    font-family: "Lucida Bright";
+}
+  @media (max-width:480px) {
+    .member {
+      flex: 0 100%
+    }
+  }
