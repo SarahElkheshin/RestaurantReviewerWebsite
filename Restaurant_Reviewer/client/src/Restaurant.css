@@ -93,7 +93,7 @@ text-align: center;
   
   .card {
     width: 300px;
-    height: 350px;
+    height: 400px;
     border: 1px solid #ddd;
     background-color: #b0ab84;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
@@ -126,7 +126,7 @@ text-align: center;
   }
   .card-textarea {
     width: 100%;
-    height: 100px;
+    height: 50%;
     resize: none;
     padding: 10px;
     margin: 10px 0;
@@ -158,7 +158,7 @@ text-align: center;
   
   .member {
     flex: 0 30%;
-    margin: 1% 1% 45px 1%;
+    margin: 1% 1% 1% 1%;
   }
   
   .member img {

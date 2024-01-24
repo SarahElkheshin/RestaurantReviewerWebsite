@@ -194,14 +194,16 @@ const commentText = comments[restaurantId];
                              <br />{restaurant.TotalNegativeComments}</div>
                     </div>
                   </div>
-                   
-
+                  
                   <form method="post" onSubmit={(e) => handleSubmit(e, restaurant._id)} >
-                    <textarea name="comment" id="" className="card-textarea" rows="4" placeholder="Enter your comment here"  onChange={(e) => handleChange(e, restaurant._id)} value={comments[restaurant._id]} />
+                    <textarea name="comment" id="" className="card-textarea" rows="2" placeholder="Enter your comment here"  onChange={(e) => handleChange(e, restaurant._id)} value={comments[restaurant._id]} />
                     <button type="submit" className="btn-primary mt-3">Submit</button>
-                  </form>
+                     </form>
+                     </div>
 
-                </div>
+                
+
+               
               </div>
             </div>
           ))}
