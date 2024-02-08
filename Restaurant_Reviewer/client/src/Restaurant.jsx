@@ -167,6 +167,7 @@ const commentText = comments[restaurantId];
         <div className="row row-cols-1 row-cols-md-4 g-4">
           {filteredRestaurants.map((restaurant, index) => (
             <div key={index} className="col">
+               <Link to={'/restaurant/${restaurant._id}'}>
               <div className="card">
                 <img src={restaurant.image} className="card-img-top h-100" alt={restaurant.name} />
                 <div className="card-body">
@@ -193,18 +194,21 @@ const commentText = comments[restaurantId];
                           <div className="name">Negative
                              <br />{restaurant.TotalNegativeComments}</div>
                     </div>
-                  </div>
-                  
-                  <form method="post" onSubmit={(e) => handleSubmit(e, restaurant._id)} >
+
+                    
+ <form method="post" onSubmit={(e) => handleSubmit(e, restaurant._id)} >
                     <textarea name="comment" id="" className="card-textarea" rows="2" placeholder="Enter your comment here"  onChange={(e) => handleChange(e, restaurant._id)} value={comments[restaurant._id]} />
                     <button type="submit" className="btn-primary mt-3">Submit</button>
                      </form>
+
+                  </div>       
                      </div>
 
                 
 
                
               </div>
+              </Link>
             </div>
           ))}
         </div>

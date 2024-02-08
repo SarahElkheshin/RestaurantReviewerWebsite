@@ -7,7 +7,7 @@ import Home from './Home'
 import User from './User'
 import Restaurant from './Restaurant';
 import Dashboard from './Dashboard'
-
+import RestaurantDetails from './RestaurantDetails'
 
 
 
@@ -23,6 +23,7 @@ function App() {
     <Route path='/users' element={<User />}></Route> 
     <Route path='/dashboard' element={<Dashboard />}></Route> 
     <Route path='/' element={<Restaurant />}></Route>
+    <Route path='/restaurant/:id' element={<RestaurantDetails />} />
 
 
    </Routes>

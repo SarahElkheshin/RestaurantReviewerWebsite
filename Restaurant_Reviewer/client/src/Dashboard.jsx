@@ -42,40 +42,39 @@ import './style.css';
 
 <main className='main-container'>
         <div className='main-title'>
-            <h3>DASHBOARD</h3>
+            <h3>Overal Sentiment Analysis</h3>
         </div>
 
         <div className='charts'>
             <ResponsiveContainer width="100%" height="100%">
             <BarChart
-            width={500}
-            height={300}
             data={breakfastData}
             margin={{
-                top: 5,
+                top: 20,
                 right: 30,
                 left: 20,
-                bottom: 5,
+                bottom: 20,
             }}
             >
                      <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" angle={-25} textAnchor="end" fontSize={10}/>
+                <XAxis dataKey="name" angle={-25} textAnchor="end" fontSize={10}  />
                 <YAxis />
                 <Tooltip />
-                <Legend />
-                <Bar dataKey="TotalPositiveComments" fill="#8884d8"   />
-                <Bar dataKey="TotalNeutralComments" fill="#ff7f7f"   />
-                <Bar dataKey="TotalNegativeComments" fill="#82ca9d" />
+                <Legend wrapperStyle={{ position: 'relative' }} />
+                <Bar dataKey="TotalPositiveComments" fill="#a3de83"   />
+                <Bar dataKey="TotalNeutralComments" fill="#ffe121"   />
+                <Bar dataKey="TotalNegativeComments" fill="#fa4659" />
+                <text x="50%" y="13" textAnchor="middle" fontSize="16" fontWeight="bold">
+                          Breakfast Category Breakdown
+                </text>
                 </BarChart>
             </ResponsiveContainer>
 
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart
-                width={500}
-                height={300}
                 data={lunchData}
                 margin={{
-                    top: 5,
+                    top: 20,
                     right: 30,
                     left: 20,
                     bottom: 5,
@@ -85,24 +84,38 @@ import './style.css';
                 <XAxis dataKey="name" angle={-25} textAnchor="end" fontSize={10} />
                 <YAxis />
                 <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="TotalPositiveComments" stroke="#8884d8" activeDot={{ r: 8 }} />
-                <Line type="monotone" dataKey="TotalNeutralComments" stroke="#82ca9d" />
-                <Line type="monotone" dataKey="TotalNegativeComments" stroke="#ff7f7f" />
+                <Legend wrapperStyle={{ position: 'relative' }}/>
+                <Line type="monotone" dataKey="TotalPositiveComments" stroke="#a3de83" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="TotalNeutralComments" stroke="#ffe121" />
+                <Line type="monotone" dataKey="TotalNegativeComments" stroke="#fa4659" />
+                <text x="50%" y="13" textAnchor="middle" fontSize="16" fontWeight="bold">
+                          Lunch Category Breakdown
+                </text>
                 </LineChart>
             </ResponsiveContainer>
 
-
+                
             <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={dinnerData}>
+        <BarChart
+         data={dinnerData}
+         margin={{
+          top: 20,
+          right: 30,
+          left: 20,
+          bottom: 5,
+      }}
+      >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" angle={-25} textAnchor="end" fontSize={10} />
           <YAxis />
           <Tooltip />
-          <Legend />
-          <Bar dataKey="TotalPositiveComments" stackId="sentiment" fill="#8884d8" />
-          <Bar dataKey="TotalNeutralComments" stackId="sentiment" fill="#82ca9d" />
-          <Bar dataKey="TotalNegativeComments" stackId="sentiment" fill="#ff7f7f" />
+          <Legend wrapperStyle={{ position: 'relative' }}/>
+          <Bar dataKey="TotalPositiveComments" stackId="sentiment" fill="#a3de83" />
+          <Bar dataKey="TotalNeutralComments" stackId="sentiment" fill="#ffe121" />
+          <Bar dataKey="TotalNegativeComments" stackId="sentiment" fill="#fa4659" />
+          <text x="50%" y="13" textAnchor="middle" fontSize="16" fontWeight="bold">
+                          Dinner Category Breakdown
+                </text>
         </BarChart>
       </ResponsiveContainer>
             </div>
