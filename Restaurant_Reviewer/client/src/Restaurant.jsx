@@ -138,8 +138,8 @@ const commentText = comments[restaurantId];
   });
 
   return (
-    <div className="d-flex flex-column align-items-center bg-custom vh-100">
-      <div className="bg-customfront p-3 rounded w-75">
+    <div className="d-flex flex-column align-items-center bg-custom vh-100" id="12">
+      <div className="bg-customfront p-3 rounded">
         <img className="logo" src='./src/assets/logo.png'/>
       <h2 className="heading">Restaurant Reviewer</h2>
         <div className="topnav">
@@ -149,6 +149,7 @@ const commentText = comments[restaurantId];
                <Link to="/login">Login</Link>
                <Link to="/register">Register</Link>
              </div>
+             
         </div>
        
 
@@ -169,7 +170,7 @@ const commentText = comments[restaurantId];
             <div key={index} className="col">
                <Link to={'/restaurant/${restaurant._id}'}>
               <div className="card">
-                <img src={restaurant.image} className="card-img-top h-100" alt={restaurant.name} />
+                <img src={restaurant.image} alt={restaurant.name} />
                 <div className="card-body">
                   <h5 className="card-title">{restaurant.name}</h5>
                 
@@ -178,30 +179,42 @@ const commentText = comments[restaurantId];
                     <img src='./src/assets/neutral.png' className="emoji"/> {restaurant.TotalNeutralComments}
                     <img src='./src/assets/negative.png' className="emoji"/> {restaurant.TotalNegativeComments}
                   </p> */}
+
                 <div id="design-cast">
                     <div className="member">
                          <img src='./src/assets/positive.png' className="img-responsive img-thumbnail emoji" alt="Responsive image" />
-                         <div className="name">Positive
-                           <br />{restaurant.TotalPositiveComments}</div>
                     </div>
+                    <div className="name">
+                      {restaurant.TotalPositiveComments}
+                    </div>
+
+
                    <div className="member">
                           <img src='./src/assets/neutral.png' className="img-responsive img-thumbnail emoji" alt="Responsive image" />
-                          <div className="name">Neutral
-                             <br />{restaurant.TotalNeutralComments}</div>
                     </div>
+
+                  <div className="name">
+                      {restaurant.TotalNeutralComments}
+                  </div>
+
                     <div className="member">
-                          <img src='./src/assets/negative.png' className="img-responsive img-thumbnail emoji" alt="Responsive image" />
-                          <div className="name">Negative
-                             <br />{restaurant.TotalNegativeComments}</div>
+                          <img src='./src/assets/negative.png' className=" img-thumbnail emoji" alt="Responsive image" />
                     </div>
+                    <div className="name">
+                        {restaurant.TotalNegativeComments}
+                      </div>
+                  </div>       
 
                     
  <form method="post" onSubmit={(e) => handleSubmit(e, restaurant._id)} >
+
+
+
+  
                     <textarea name="comment" id="" className="card-textarea" rows="2" placeholder="Enter your comment here"  onChange={(e) => handleChange(e, restaurant._id)} value={comments[restaurant._id]} />
-                    <button type="submit" className="btn-primary mt-3">Submit</button>
+                    <button type="submit" className="btn-primary" id="submit-button">Submit</button>
                      </form>
 
-                  </div>       
                      </div>
 
                 
@@ -213,7 +226,7 @@ const commentText = comments[restaurantId];
           ))}
         </div>
 
-        <Link to="/home" className="btn btn-primary mt-3">Back to Home</Link>
+        {/* <Link to="/home" className="btn btn-primary mt-3">Back to Home</Link> */}
       </div>
     </div>
   );

@@ -1,11 +1,17 @@
-.bg-custom {
-
-  background: #ffffff;
+#body{
+  width:  1100px !important;
+  /* margin-left: 180px; */
 }
+
+/* .bg-custom {
+
+  background: #5d1111;
+} */
 
 .bg-customfront
 {
   background-color: #f4f9f4 ;
+  width:  1500px !important;
 }
 
 .logo {
@@ -19,7 +25,7 @@
 {
   font-family: "Comic Sans MS", cursive, sans-serif;
   color: #5c8d89;
-text-align: center;
+  text-align: center;
   font-size: 40px;
   border-bottom: 2px solid white;
 }
@@ -54,7 +60,7 @@ text-align: center;
   }
 
   .topnav-right {
-    margin-left: 780px;
+    margin-left:1100px;
     margin-right: 0%;
   }
   
@@ -87,18 +93,22 @@ text-align: center;
     padding: 20px 0;
     box-sizing: border-box;
     white-space: nowrap; /* Keep items on one line */
+    content: "";
+    clear: both;
+   
   }
   
   
   .card {
     width: 300px;
-    height: 400px;
+    height: 420px;
     border: 1px solid #ddd;
     background-color: #a7d7c5;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 10px;
     text-align: center;
+    margin-left: 50px;
   }
   
   .card-img {
@@ -112,6 +122,10 @@ text-align: center;
     color: #ffffff;
     font-family: "Lucida Bright";
   }
+  .card-body{
+    position:absolute;
+    top:173px;
+  }
   
   .card-text {
     font-size: 16px;
@@ -124,16 +138,16 @@ text-align: center;
     height: 30px;
   }
   .card-textarea {
-    width: 100%;
+    width: 250px;
     height: 50%;
     resize: none;
     padding: 10px;
-    margin: 10px 0;
+    /* margin: 10px 0; */
+    margin-top: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
   }
   
- 
   
   .btn-primary:hover {
     background-color: #8bb4b0;
@@ -145,35 +159,115 @@ text-align: center;
     color: hsl(0, 0%, 100%);
     border: none;
     border-radius: 4px;
-    padding: 10px 20px;
+    padding: 7px 12px;
     cursor: pointer;
+    position: absolute;
+    top: 185px;
+    right: 100px;
   }
 
 
   #design-cast {
     display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
    
   }
   
   .member {
-    flex: 0 30%;
-    margin: 1% 1% 1% 1%;
+    display: flex;
+    /* justify-content: space-between; */
+    gap: 60px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
   }
   
   .member img {
     max-width: 100%;
     display: block;
   }
-  .name {
-    position: absolute;
-    bottom: 0px;
-    font-size: 8px;
+  .positive {
+    font-size: 12px;
+    font-weight: bold;
     color: #ffffff;
-    font-family: "Lucida Bright";
+    font-family: "Lucida Bright"; 
+    position: absolute;
+    top:94px; 
+    left: 40px;
+  }
+
+  .neutral {
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    font-family: "Lucida Bright"; 
+    position: absolute;
+    top:94px; 
+    left: 80px;
+  }
+
+
+  .negative {
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    font-family: "Lucida Bright"; 
+    position: absolute;
+    top:94px; 
+    left: 120px;
+  }
+  .name {
+    /* display: flex; */
+    font-size: 14px;
+    font-weight:bolder;
+    color: #ffffff;
+    font-family: "Lucida Bright"; 
+    margin-top: 35px;
+    margin-left: -67px;
+    /* margin-top: 35px;
+    margin-left: -30px; */
+
+    /* margin-right: 20px; */
+    /* position: absolute; */
 }
-  @media (max-width:480px) {
+  /* @media (max-width:480px) {
     .member {
       flex: 0 100%
     }
+  } */
+
+  .category-selection {
+    margin-bottom: 20px;
   }
+  
+  label {
+    font-size: 16px;
+    margin-right: 10px;
+    font-family:monospace
+
+  }
+  
+  select {
+    width: 200px;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+  }
+  
+  /* Style the select box on hover */
+  select:hover {
+    border-color: #74b49b;
+  }
+  
+  /* Style the select box when it's focused */
+  select:focus {
+    border-color: #74b49b;
+    outline: none;
+  }
+  

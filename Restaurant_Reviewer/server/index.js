@@ -4,17 +4,26 @@ const cors = require('cors')
 const UserModel =require('./models/User')
 const Restaurant = require('./models/Restaurant'); // Import the Restaurant model
 const bodyParser = require ('body-parser')
-const app = express()
 const Feedbacks = require('./models/Feedback');  // Adjust the import path
+const bcrypt = require('bcrypt')
+const cookieParser = require('cookie-parser')
+const jwt= require('jsonwebtoken')
+
+const app = express()
 
 app.use(express.json()); // transfer fata from frontend to backend in json format
-app.use(cors());
+app.use(cors({
+  origin:["http://localhost:5173"],
+   methods: ["GET", "POST"],
+  credentials: true}
+  ));
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded ({
     extended : true
 
 }));
+app.use(cookieParser())
 
 mongoose.connect('mongodb://localhost:27017/restaurantreviewer', {
     useNewUrlParser: true,
@@ -23,21 +32,35 @@ mongoose.connect('mongodb://localhost:27017/restaurantreviewer', {
 //mongoose.connect("mongodb://127.0.0.1:27017/employee") 
 //if localhost doesn't work try 127.0.0.1
 
-
+//Create a token that is valid for one day
 app.post('/login', (req,res) => {
     const {email, password} = req.body;
     UserModel.findOne({email: email})
     .then(user => {
         if (user) {
-            if(user.password === password)
+          bcrypt.compare(password, user.password, (err, response)=>{
+            if(response)
             {
-                res.json("Success")
-            }
-            else {
-                res.json("password incorrect")
-            }
+              const token=jwt.sign({email: user.email}, 
+                "jwt-secret-key", {expiresIn:"1d"})
+                res.cookie('token', token)
+                return res.json("Success")
 
-        }
+
+
+            }else{
+              return res.json("Incorrect Password")
+            }
+          })
+            // if(user.password === password)
+            // {
+            //     res.json("Success")
+            // }
+            // else {
+            //     res.json("password incorrect")
+            // }
+
+         }
         else{
             res.json("does not exist")
         }
@@ -94,9 +117,18 @@ app.post('/feedbacks', async (req, res) => {
 
 
 app.post('/register', (req, res) => {
-    UserModel.create(req.body)
-    .then(users=>res.json(users))
+  const {name, email, password} = req.body;
+  bcrypt.hash(password, 10 )
+  .then(hash=>{
+    UserModel.create({name, email, password:hash})
+    .then(user => res.json({status:"OK"}))
     .catch(err=>res.json(err))
+
+  }).catch(err => res.json(err))
+
+    // UserModel.create(req.body)
+    // .then(users=>res.json(users))
+    // .catch(err=>res.json(err))
 
 
 
