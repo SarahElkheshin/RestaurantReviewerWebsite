@@ -246,12 +246,13 @@
   label {
     font-size: 16px;
     margin-right: 10px;
-    font-family:monospace
+    font-family:monospace;
+    background-color: ffffff
 
   }
   
   select {
-    width: 200px;
+    width: 100px;
     padding: 8px;
     font-size: 16px;
     border: 1px solid #ddd;

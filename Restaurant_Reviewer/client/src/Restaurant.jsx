@@ -155,7 +155,7 @@ const commentText = comments[restaurantId];
 
         {/* Category Selection */}
         <div className="category-selection">
-          <label htmlFor="category">Select a Category:</label>
+          <label htmlFor="category">Category:</label>
           <select id="category" name="category" value={category} onChange={(e) => setCategory(e.target.value)}>
             <option value="all">All</option>
             <option value="breakfast">Breakfast</option>
