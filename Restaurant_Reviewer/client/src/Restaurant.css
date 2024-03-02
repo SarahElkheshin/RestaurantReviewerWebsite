@@ -63,6 +63,45 @@
     margin-left:1100px;
     margin-right: 0%;
   }
+
+  .selection-container {
+    display: flex;
+    justify-content: space-between; /* Adjust the space between the selections */
+    align-items: center;
+  }
+
+  .sort-selection,
+.category-selection {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+label {
+  font-size: 16px;
+  margin-right: 10px;
+  font-family: monospace;
+  background-color: #ffffff; /* Add a missing # for the color */
+  padding: 8px; /* Add padding for better spacing */
+  border-radius: 4px; /* Add border-radius for a subtle rounded appearance */
+}
+select {
+  width: 200px; /* Adjust width for better visibility of options */
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  transition: border-color 0.3s; /* Add a smooth transition for better user experience */
+}
+
+/* Style the select box on hover and focus */
+select:hover,
+select:focus {
+  border-color: #74b49b;
+  outline: none;
+}
   .search-bar {
     margin-top: 5px;
     margin-bottom: 20px;
@@ -254,36 +293,6 @@
     }
   } */
 
-  .category-selection {
-    margin-bottom: 20px;
-  }
-  
-  label {
-    font-size: 16px;
-    margin-right: 10px;
-    font-family:monospace;
-    background-color: ffffff
 
-  }
   
-  select {
-    width: 100px;
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-    color: #333;
-  }
-  
-  /* Style the select box on hover */
-  select:hover {
-    border-color: #74b49b;
-  }
-  
-  /* Style the select box when it's focused */
-  select:focus {
-    border-color: #74b49b;
-    outline: none;
-  }
-  
+ 

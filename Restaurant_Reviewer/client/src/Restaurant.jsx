@@ -58,7 +58,7 @@ function Restaurant() {
 
   // Send the comment to the server
   try {
-    const response = await axios.post(`http://localhost:3001/feedbacks`, {
+    const response = await axios.post('http://localhost:3001/feedbacks', {
       restaurantId,
       comment: commentText,
     });
@@ -146,16 +146,15 @@ function Restaurant() {
   };
 
   const sortedRestaurants = [...restaurants].sort((a, b) => {
-    const valueA = sortOption === 'name' ? a[sortOption].toLowerCase() : a[sortOption];
-    const valueB = sortOption === 'name' ? b[sortOption].toLowerCase() : b[sortOption];
+    const nameA = a.name.toLowerCase();
+    const nameB = b.name.toLowerCase();
   
     if (sortOrder === 'asc') {
-      return valueA < valueB ? -1 : 1;
+      return nameA.localeCompare(nameB);
     } else {
-      return valueA > valueB ? -1 : 1;
+      return nameB.localeCompare(nameA);
     }
   });
-  
   
 
   const filteredRestaurants = sortedRestaurants.filter(restaurant => {
@@ -179,15 +178,15 @@ function Restaurant() {
     <div className="d-flex flex-column align-items-center bg-custom vh-100" id="12">
       <div className="bg-customfront p-3 rounded">
         <img className="logo" src='./src/assets/logo.png'/>
-            <h2 className="heading">Restaurant Reviewer</h2>
-
+      <h2 className="heading">Restaurant Reviewer</h2>
         <div className="topnav">
           <Link to="/home" className="active">Home</Link>
           <Link to="/dashboard">Dashboard</Link>
           <div className="topnav-right">
                <Link to="/login">Login</Link>
                <Link to="/register">Register</Link>
-          </div>
+             </div>
+    
         </div>
 
         {/* Add the SearchBar component */}
@@ -195,28 +194,30 @@ function Restaurant() {
         <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
         </div>
        
-        {/* Add the sorting dropdown */}
-        <div className="sort-selection">
-           <label htmlFor="sort">Sort By:</label>
-          <select id="sort" name="sort" value={`${sortOption}-${sortOrder}`} onChange={handleSortChange}>
+        <div className="selection-container">
+
+          {/* Category Selection */}
+          <div className="category-selection">
+            <label htmlFor="category">Category:</label>
+            <select id="category" name="category" value={category} onChange={(e) => setCategory(e.target.value)}>
+              <option value="all">All</option>
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+            </select>
+          </div>
+
+          {/* Add the sorting dropdown */}
+          <div className="sort-selection">
+            <label htmlFor="sort">Sort By:</label>
+            <select id="sort" name="sort" value={`${sortOption}-${sortOrder}`} onChange={handleSortChange}>
               <option value="name-asc">Name (A-Z)</option>
               <option value="name-desc">Name (Z-A)</option>
               <option value="TotalPositiveComments-asc">Positive Comments (Low to High)</option>
               <option value="TotalPositiveComments-desc">Positive Comments (High to Low)</option>
-           </select>
-          </div>
+            </select>
+          </div>   
 
-
-
-        {/* Category Selection */}
-        <div className="category-selection">
-          <label htmlFor="category">Category:</label>
-          <select id="category" name="category" value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="all">All</option>
-            <option value="breakfast">Breakfast</option>
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
-          </select>
         </div>
 
         {/* Restaurants */}
