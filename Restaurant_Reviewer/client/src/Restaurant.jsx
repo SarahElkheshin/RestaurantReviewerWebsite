@@ -179,15 +179,15 @@ function Restaurant() {
     <div className="d-flex flex-column align-items-center bg-custom vh-100" id="12">
       <div className="bg-customfront p-3 rounded">
         <img className="logo" src='./src/assets/logo.png'/>
-      <h2 className="heading">Restaurant Reviewer</h2>
+            <h2 className="heading">Restaurant Reviewer</h2>
+
         <div className="topnav">
           <Link to="/home" className="active">Home</Link>
           <Link to="/dashboard">Dashboard</Link>
           <div className="topnav-right">
                <Link to="/login">Login</Link>
                <Link to="/register">Register</Link>
-             </div>
-    
+          </div>
         </div>
 
         {/* Add the SearchBar component */}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import './style.css';
  import 
  { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } 
@@ -43,6 +44,15 @@ import './style.css';
 <main className='main-container'>
         <div className='main-title'>
             <h3>Overal Sentiment Analysis</h3>
+        </div>
+
+        <div className="topnav">
+          <Link to="/">Home</Link>
+          <Link to="/dashboard" className="active">Dashboard</Link>
+          <div className="topnav-right">
+               <Link to="/login">Login</Link>
+               <Link to="/register">Register</Link>
+          </div>
         </div>
 
         <div className='charts'>
