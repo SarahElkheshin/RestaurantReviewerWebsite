@@ -63,7 +63,22 @@
     margin-left:1100px;
     margin-right: 0%;
   }
+  .search-bar {
+    margin-top: 5px;
+    margin-bottom: 20px;
+  }
   
+  .search-bar input {
+    width: 1470px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 8px;
+  }
+  
+  .search-bar input::placeholder {
+    color: #aaa;
+  }
 
   .restaurant-container {
     display: flex;

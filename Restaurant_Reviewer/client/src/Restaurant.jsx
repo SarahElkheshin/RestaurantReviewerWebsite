@@ -2,16 +2,24 @@ import { useState, useEffect } from "react";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Restaurant.css';
+import SearchBar from './SearchBar';
 
 function Restaurant() {
   const [restaurants, setRestaurants] = useState([]);
-  const [category, setCategory] = useState('all'); // Default to 'all' category
+  const [category, setCategory] = useState('all'); 
   const [comments, setComments] = useState({});
-  const [feedbacks, setFeedbacks] = useState({});  // Add this line
+  const [data, setData] = useState({ comment: "" });
+  const [feedbacks, setFeedbacks] = useState({}); 
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const [sortOption, setSortOption] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
+
+
 
 
   useEffect(() => {
-    axios.get('http://localhost:3001/restaurants')
+    axios.get('http://localhost:3001/restaurants?sort=${sortOption}&order=${sortOrder}')
       .then(response => {
         setRestaurants(response.data);
         // Initialize comments for each restaurant
@@ -24,9 +32,9 @@ function Restaurant() {
       .catch(error => {
         console.error(error);
       });
-  }, []);
+  }, [sortOption, sortOrder]);
 
-  const [data, setData] = useState({ comment: "" });
+  
 
   const handleChange = (e, restaurantId) => {
     const name = e.target.name;
@@ -38,10 +46,9 @@ function Restaurant() {
   };
   
 
-  const handleSubmit = async (e, restaurantId) => {
+ const handleSubmit = async (e, restaurantId) => {
     e.preventDefault();
-//ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
-const commentText = comments[restaurantId];
+    const commentText = comments[restaurantId];
 
   // Update local state
   setComments({
@@ -56,7 +63,7 @@ const commentText = comments[restaurantId];
       comment: commentText,
     });
 
-    // Update MongoDB collection
+    // Saving Feedback to MongoDB
     setFeedbacks({
       ...feedbacks,
       [response.data._id]: response.data,
@@ -64,7 +71,7 @@ const commentText = comments[restaurantId];
   } catch (error) {
     console.error('Error submitting comment:', error);
   }
-//ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+
     var myHeaders = new Headers();
     myHeaders.append("apikey", "USkeTl8EQKqJCavRABKkLaVQ61j0R6aJ");
     
@@ -131,11 +138,42 @@ const commentText = comments[restaurantId];
       .catch(error => console.log('error', error));   
   };
 
-  // Filter restaurants based on the selected category
-  const filteredRestaurants = restaurants.filter(restaurant => {
-    if (category === 'all') return true;
-    return restaurant.category === category;
+  const handleSortChange = (e) => {
+    const value = e.target.value;
+    const [sortOption, sortOrder] = value.split('-');
+    setSortOption(sortOption);
+    setSortOrder(sortOrder);
+  };
+
+  const sortedRestaurants = [...restaurants].sort((a, b) => {
+    const valueA = sortOption === 'name' ? a[sortOption].toLowerCase() : a[sortOption];
+    const valueB = sortOption === 'name' ? b[sortOption].toLowerCase() : b[sortOption];
+  
+    if (sortOrder === 'asc') {
+      return valueA < valueB ? -1 : 1;
+    } else {
+      return valueA > valueB ? -1 : 1;
+    }
   });
+  
+  
+
+  const filteredRestaurants = sortedRestaurants.filter(restaurant => {
+    if (category !== 'all' && restaurant.category !== category) {
+      return false;
+    }
+
+    // Check if the restaurant name includes the search term
+    return restaurant.name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+ 
+  
+ 
+  
+ 
+  
+  
 
   return (
     <div className="d-flex flex-column align-items-center bg-custom vh-100" id="12">
@@ -149,9 +187,26 @@ const commentText = comments[restaurantId];
                <Link to="/login">Login</Link>
                <Link to="/register">Register</Link>
              </div>
-             
+    
+        </div>
+
+        {/* Add the SearchBar component */}
+        <div className="SearchBar">
+        <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
         </div>
        
+        {/* Add the sorting dropdown */}
+        <div className="sort-selection">
+           <label htmlFor="sort">Sort By:</label>
+          <select id="sort" name="sort" value={`${sortOption}-${sortOrder}`} onChange={handleSortChange}>
+              <option value="name-asc">Name (A-Z)</option>
+              <option value="name-desc">Name (Z-A)</option>
+              <option value="TotalPositiveComments-asc">Positive Comments (Low to High)</option>
+              <option value="TotalPositiveComments-desc">Positive Comments (High to Low)</option>
+           </select>
+          </div>
+
+
 
         {/* Category Selection */}
         <div className="category-selection">
