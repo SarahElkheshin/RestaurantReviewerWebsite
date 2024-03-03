@@ -224,7 +224,6 @@ function Restaurant() {
         <div className="row row-cols-1 row-cols-md-4 g-4">
           {filteredRestaurants.map((restaurant, index) => (
             <div key={index} className="col">
-               <Link to={'/restaurant/${restaurant._id}'}>
               <div className="card">
                 <img src={restaurant.image} alt={restaurant.name} />
                 <div className="card-body">
@@ -277,12 +276,9 @@ function Restaurant() {
 
                
               </div>
-              </Link>
             </div>
           ))}
         </div>
-
-        {/* <Link to="/home" className="btn btn-primary mt-3">Back to Home</Link> */}
       </div>
     </div>
   );

@@ -1,5 +1,3 @@
-
-  
   .charts {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -9,9 +7,13 @@
   }
   .main-title{
     font-family: "Comic Sans MS", cursive, sans-serif;
-  color: #f2f2f2;
+  color: #74b49b;
 text-align: center;
   font-size: 40px;
   margin-top: 30px;
   border-bottom: 2px solid white;
   }
+.topnav-right-dashboard{
+  margin-left:1900px;
+  margin-right: 0%;
+}
