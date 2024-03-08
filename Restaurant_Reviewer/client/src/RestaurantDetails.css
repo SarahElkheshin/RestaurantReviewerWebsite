@@ -1,7 +1,7 @@
 .grid {
     display: grid;
     grid-template-columns: auto 1500px;
-    grid-template-rows: 76px minmax(160px, auto) auto;
+    grid-template-rows: 100px minmax(160px, auto) auto;
     grid-template-areas: 
       'header header'
       'main rightbar'
@@ -28,7 +28,7 @@
   
   .content {
     color: #242424;
-    background-color: #f25fff;
+    background-color: #a7d7c5;
     font-weight: 600;
     text-align: center;
     box-sizing: border-box;
@@ -50,14 +50,23 @@
     width: 50%;
     margin-bottom: 20px;
     padding: 0px 10px;
+
   }
   
   .feedback-text {
-    color: #242424;
-    background-color: #1bbefe;
+    color: #f6f1f1;
+    background-color: #a7d7c5;
     font-weight: 600;
     text-align: center;
     box-sizing: border-box;
-    height: 100%;
+    height: 70%;
     padding: 10px;
+    border-radius: 37px;
+    box-shadow: 12px 4px 11px 6px #eceaea;
+  }
+  .logo {
+    width: 150px; /* Adjust the width as needed */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Center the logo */
+    margin: 0 auto; /* Center the logo horizontally */
   }

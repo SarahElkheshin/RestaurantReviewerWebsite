@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './RestaurantDetails.css';
 
 function RestaurantDetails() {
@@ -31,8 +32,10 @@ function RestaurantDetails() {
 
     <div className="grid">
       <header className="page-header">
-        <div className="content">
-          <h2>{restaurant.name}</h2>
+        <div className="content">      
+          <img className="logo" src='./src/assets/positive.png'/>
+          <h2>Restaurant Reviewer</h2>
+          
         </div>
       </header>
       <aside className="page-rightbar">
@@ -51,6 +54,7 @@ function RestaurantDetails() {
       <main className="page-main">
         <div className="content">
           <img src={restaurant.image} alt={restaurant.name} />
+          <h2>{restaurant.name}</h2>
           <p>Category: {restaurant.category}</p>
           <p>Type: {restaurant.type}</p>
           <p>District: {restaurant.district}</p>
