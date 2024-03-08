@@ -31,11 +31,17 @@ function RestaurantDetails() {
   return (
 
     <div className="grid">
-      <header className="page-header">
-        <div className="content">      
-          <img className="logo" src='./src/assets/positive.png'/>
-          <h2>Restaurant Reviewer</h2>
-          
+      <header className="page-header">    
+          <img className="logo" src='./src/assets/logo.png'/>
+          <h2 className="heading">Restaurant Reviewer</h2>
+          <div className="topnav">
+          <Link to="/home" className="active">Home</Link>
+          <Link to="/dashboard">Dashboard</Link>
+          <div className="topnav-right">
+               <Link to="/login">Login</Link>
+               <Link to="/register">Register</Link>
+             </div>
+    
         </div>
       </header>
       <aside className="page-rightbar">

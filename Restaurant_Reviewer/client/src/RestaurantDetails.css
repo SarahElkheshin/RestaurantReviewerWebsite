@@ -1,7 +1,7 @@
 .grid {
     display: grid;
-    grid-template-columns: auto 1500px;
-    grid-template-rows: 100px minmax(160px, auto) auto;
+    grid-template-columns: 700px auto;
+    grid-template-rows: 200px minmax(160px, auto) auto;
     grid-template-areas: 
       'header header'
       'main rightbar'
@@ -20,6 +20,7 @@
   
   .page-main {
     grid-area: main;
+    margin-left: 50px;
   }
   
   .page-footer {
@@ -69,4 +70,46 @@
     height: auto; /* Maintain aspect ratio */
     display: block; /* Center the logo */
     margin: 0 auto; /* Center the logo horizontally */
+  }
+  .heading
+{
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  color: #5c8d89;
+  text-align: center;
+  font-size: 40px;
+  border-bottom: 2px solid white;
+}
+
+  .topnav {
+    background-color: #a7d7c5;
+    overflow: hidden;
+    border-bottom: 2px solid white; /* Add a white line below the navigation bar */
+  }
+  
+  /* Style the links inside the navigation bar */
+  .topnav a {
+    float: left;
+    color: #ffffff;
+    text-align: center;
+    padding: 14px 50px;
+    text-decoration: none;
+    font-size: 20px;
+    font-family:"Garamond";
+  }
+  
+  /* Change the color of links on hover */
+  .topnav a:hover {
+    background-color: #74b49b;
+    color: black;
+  }
+  
+  /* Add a color to the active/current link */
+  .topnav a.active {
+    background-color: #74b49b;
+    color: white;
+  }
+
+  .topnav-right {
+    margin-left:1100px;
+    margin-right: 0%;
   }
