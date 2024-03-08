@@ -30,39 +30,42 @@ function RestaurantDetails() {
   return (
 
     <div className="grid">
-  <header className="page-header">
-    <div className="content">
-      <h2>{restaurant.name}</h2>
-    </div>
-  </header>
-  <aside className="page-rightbar">
-    <div className="content">
-    <ul>
-          {feedbacks.map(feedback => (
-            <li key={feedback._id} className="feedback-box">
-              {feedback.comment}
-            </li>
-          ))}
-        </ul>
-    </div>
-  </aside>
-  <main className="page-main">
-    <div className="content">
-        <p>Category: {restaurant.category}</p>
-        <p>Type: {restaurant.type}</p>
-        <p>District: {restaurant.district}</p>
-        <p>Total Positive Comments: {restaurant.TotalPositiveComments}</p>
-        <p>Total Neutral Comments: {restaurant.TotalNeutralComments}</p>
-        <p>Total Negative Comments: {restaurant.TotalNegativeComments}</p>
+      <header className="page-header">
+        <div className="content">
+          <h2>{restaurant.name}</h2>
+        </div>
+      </header>
+      <aside className="page-rightbar">
+        <div className="flexbox">
+          <div className="item">
+          
+            {feedbacks.map(feedback => (
+              <p key={feedback._id} className="feedback-text">
+                {feedback.comment}
+              </p>
+            ))}
+          
+          </div>
+        </div>
+      </aside>
+      <main className="page-main">
+        <div className="content">
+          <img src={restaurant.image} alt={restaurant.name} />
+          <p>Category: {restaurant.category}</p>
+          <p>Type: {restaurant.type}</p>
+          <p>District: {restaurant.district}</p>
+          <p>Total Positive Comments: {restaurant.TotalPositiveComments}</p>
+          <p>Total Neutral Comments: {restaurant.TotalNeutralComments}</p>
+          <p>Total Negative Comments: {restaurant.TotalNegativeComments}</p>
 
+        </div>
+      </main>
+      <footer className="page-footer">
+        <div className="content">
+          <p>Footer</p>
+        </div>
+      </footer>
     </div>
-  </main>
-  <footer className="page-footer">
-    <div className="content">
-      <p>Footer</p>
-    </div>
-  </footer>
-</div>
   );
 }
 
