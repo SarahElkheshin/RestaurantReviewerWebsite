@@ -7,6 +7,8 @@ import SearchBar from './SearchBar';
 function Restaurant() {
   const [restaurants, setRestaurants] = useState([]);
   const [category, setCategory] = useState('all'); 
+  const [type, setType] = useState('all');
+  const [district, setDistrict] = useState('all');
   const [comments, setComments] = useState({});
   const [data, setData] = useState({ comment: "" });
   const [feedbacks, setFeedbacks] = useState({}); 
@@ -14,6 +16,7 @@ function Restaurant() {
 
   const [sortOption, setSortOption] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
+
 
 
 
@@ -165,7 +168,6 @@ function Restaurant() {
     // Check if the restaurant name includes the search term
     return restaurant.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
-
  
   
  
@@ -226,15 +228,11 @@ function Restaurant() {
             <div key={index} className="col">
               <div className="card">
                 <img src={restaurant.image} alt={restaurant.name} />
+             
                 <div className="card-body">
+                <Link to={`/restaurant/${restaurant._id}`}>
                   <h5 className="card-title">{restaurant.name}</h5>
-                
-                  {/* <p className="card-text">
-                  <img src='./src/assets/positive.png' className="emoji"/> {restaurant.TotalPositiveComments}
-                    <img src='./src/assets/neutral.png' className="emoji"/> {restaurant.TotalNeutralComments}
-                    <img src='./src/assets/negative.png' className="emoji"/> {restaurant.TotalNegativeComments}
-                  </p> */}
-
+                </Link>
                 <div id="design-cast">
                     <div className="member">
                          <img src='./src/assets/positive.png' className="img-responsive img-thumbnail emoji" alt="Responsive image" />
