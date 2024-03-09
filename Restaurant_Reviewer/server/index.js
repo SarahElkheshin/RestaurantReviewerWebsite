@@ -137,14 +137,32 @@ app.put('/restaurants/:id/incrementNeg', async (req, res) => {
 
 app.get('/restaurants', async (req, res) => {
     try {
-      const { category } = req.query;
+      //  const { category } = req.query;
+      //  If a category filter is provided, filter by category, else get all restaurants
+   //     const query = category ? { category } : {};
+    //    const restaurants = await Restaurant.find(query);
+      //  res.json(restaurants);
 
-      // If a category filter is provided, filter by category, else get all restaurants
-      const query = category ? { category } : {};
+// Construct the filter object based on provided parameters
+const { category, type, district } = req.query;
+const filters = {};
 
-      const restaurants = await Restaurant.find(query);
+if (category && category !== 'all') {
+  filters.category = category;
+}
 
-      res.json(restaurants);
+if (type && type !== 'all') {
+  filters.type = type;
+}
+
+if (district && district !== 'all') {
+  filters.district = district;
+}
+
+// Use the filters to query the database
+const restaurants = await Restaurant.find(filters);
+
+res.json(restaurants);
     } catch (err) {
       console.log(err);
     }

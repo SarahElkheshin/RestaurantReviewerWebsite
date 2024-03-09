@@ -22,7 +22,17 @@ function Restaurant() {
 
 
   useEffect(() => {
-    axios.get('http://localhost:3001/restaurants?sort=${sortOption}&order=${sortOrder}')
+   // axios.get('http://localhost:3001/restaurants?sort=${sortOption}&order=${sortOrder}')
+   axios
+    .get('http://localhost:3001/restaurants', {
+      params: {
+        category,
+        type,
+        district,
+        sortOption,
+        sortOrder,
+      },
+    })
       .then(response => {
         setRestaurants(response.data);
         // Initialize comments for each restaurant
@@ -35,7 +45,7 @@ function Restaurant() {
       .catch(error => {
         console.error(error);
       });
-  }, [sortOption, sortOrder]);
+  }, [category, type, district, sortOption, sortOrder]);
 
   
 
@@ -208,6 +218,30 @@ function Restaurant() {
               <option value="dinner">Dinner</option>
             </select>
           </div>
+
+          {/* Type Selection */}
+          <div className="type-selection">
+            <label htmlFor="type">Type:</label>
+            <select id="type" name="type" value={type} onChange={(e) => setType(e.target.value)} >
+              <option value="all">All</option>
+              <option value="fine dining">Fine Dining</option>
+              <option value="burger">Burger</option>
+              <option value="fast food">Fast Food</option>
+              <option value="pastries">Pastries</option>
+            </select>
+          </div>
+
+          {/* District Selection */}
+          <div className="district-selection">
+            <label htmlFor="district">District:</label>
+            <select id="district" name="district" value={district} onChange={(e) => setDistrict(e.target.value)}>
+              <option value="all">All</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>
+
 
           {/* Add the sorting dropdown */}
           <div className="sort-selection">
