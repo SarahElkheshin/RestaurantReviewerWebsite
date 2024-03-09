@@ -70,7 +70,7 @@
     align-items: center;
   }
 
-  .sort-selection,
+  .sort-selection,.type-selection,.district-selection,
 .category-selection {
   margin-bottom: 20px;
   display: flex;

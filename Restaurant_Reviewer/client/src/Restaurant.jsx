@@ -125,6 +125,7 @@ function Restaurant() {
           
             
         }
+
         else if (sentiment === 'negative') {
           // Make an HTTP request to your backend API to update the restaurant data
           axios.put(`http://localhost:3001/restaurants/${restaurantId}/incrementNeg`)
@@ -140,13 +141,24 @@ function Restaurant() {
               setRestaurants(updatedRestaurants);
               
 
-          })
-
-           
-            
+          })            
         }
 
-    
+        else if (sentiment === 'neutral') {
+          // Make an HTTP request to your backend API to update the restaurant data
+          axios.put(`http://localhost:3001/restaurants/${restaurantId}/incrementNeutral`)
+          .then(response=>{
+            const updatedRestaurants = restaurants.map(restaurant => {
+              if (restaurant._id === restaurantId) {
+                return { ...restaurant, TotalNeutralComments: restaurant.TotalNeutralComments + 1 };
+              }
+              return restaurant;
+            });
+            setRestaurants(updatedRestaurants);     
+          })            
+        }
+        
+        
     })
       .catch(error => console.log('error', error));   
   };

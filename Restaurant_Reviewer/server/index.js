@@ -14,7 +14,7 @@ const app = express()
 app.use(express.json()); // transfer fata from frontend to backend in json format
 app.use(cors({
   origin:["http://localhost:5173"],
-   methods: ["GET", "POST"],
+   methods: ["GET", "POST", "PUT"],
   credentials: true}
   ));
 app.set('view engine', 'ejs');
@@ -121,6 +121,28 @@ app.put('/restaurants/:id/incrementNeg', async (req, res) => {
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       id,
       { $inc: { TotalNegativeComments: 1 } }, // Use $inc to increment by 1
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedRestaurant) {
+      return res.status(404).json({ error: 'Restaurant not found.' });
+    }
+
+    res.json(updatedRestaurant);
+  } catch (error) {
+    console.error('Error updating restaurant:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
+app.put('/restaurants/:id/incrementNeutral', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the restaurant by ID and increment the TotalPositiveComments field by 1
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+      id,
+      { $inc: { TotalNeutralComments: 1 } }, // Use $inc to increment by 1
       { new: true } // Return the updated document
     );
 
