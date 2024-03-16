@@ -47,7 +47,6 @@ function RestaurantDetails() {
       <aside className="page-rightbar">
         <div className="flexbox">
           <div className="item">
-          
             {feedbacks.map(feedback => (
               <p key={feedback._id} className="feedback-text">
                 {feedback.comment}
@@ -70,11 +69,6 @@ function RestaurantDetails() {
 
         </div>
       </main>
-      <footer className="page-footer">
-        <div className="content">
-          <p>Footer</p>
-        </div>
-      </footer>
     </div>
   );
 }
