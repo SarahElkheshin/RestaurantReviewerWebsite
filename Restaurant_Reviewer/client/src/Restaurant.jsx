@@ -273,8 +273,7 @@ function Restaurant() {
           {filteredRestaurants.map((restaurant, index) => (
             <div key={index} className="col">
               <div className="card">
-                <img src={restaurant.image} alt={restaurant.name} />
-             
+                <img className="card-img" src={restaurant.image} alt={restaurant.name} />
                 <div className="card-body">
                 <Link to={`/restaurant/${restaurant._id}`}>
                   <h5 className="card-title">{restaurant.name}</h5>
