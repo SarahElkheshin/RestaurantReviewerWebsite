@@ -208,7 +208,8 @@ select:focus {
   }
   
   .btn-primary {
-    margin: 10px 0;
+    margin: 10px 10px;
+    width: 250px;
     background-color: #5c8d89;
     color: hsl(0, 0%, 100%);
     border: none;
@@ -217,7 +218,7 @@ select:focus {
     cursor: pointer;
     position: absolute;
     top: 190px;
-    right: 2px;
+    right: 6px;
   }
 
 
