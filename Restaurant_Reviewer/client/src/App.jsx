@@ -5,6 +5,7 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import User from './User'
 import Restaurant from './Restaurant';
 import Dashboard from './Dashboard'
+import UserProfile from './UserProfile';
 import RestaurantDetails from './RestaurantDetails'
 
 
@@ -21,6 +22,7 @@ function App() {
     <Route path='/dashboard' element={<Dashboard />}></Route> 
     <Route path='/' element={<Restaurant />}></Route>
     <Route path='/restaurant/:id' element={<RestaurantDetails />} />
+    <Route path='/profile' element={<UserProfile />} />
 
 
    </Routes>

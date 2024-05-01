@@ -275,7 +275,7 @@ function Restaurant() {
               <div className="card">
                 <img className="card-img" src={restaurant.image} alt={restaurant.name} />
                 <div className="card-body">
-                <Link to={`/restaurant/${restaurant._id}`}>
+                <Link to={`/restaurant/${restaurant._id}`} style={{ textDecoration: 'none' }}>
                   <h5 className="card-title">{restaurant.name}</h5>
                 </Link>
                 <div id="design-cast">
