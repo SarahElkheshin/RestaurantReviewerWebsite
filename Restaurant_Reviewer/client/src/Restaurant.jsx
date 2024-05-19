@@ -4,19 +4,20 @@ import { Link } from 'react-router-dom';
 import './Restaurant.css';
 import SearchBar from './SearchBar';
 
-function Restaurant() {
+function Restaurant(userId) {
   const [restaurants, setRestaurants] = useState([]);
   const [category, setCategory] = useState('all'); 
   const [type, setType] = useState('all');
   const [district, setDistrict] = useState('all');
   const [comments, setComments] = useState({});
   const [data, setData] = useState({ comment: "" });
+  
   const [feedbacks, setFeedbacks] = useState({}); 
   const [searchTerm, setSearchTerm] = useState('');
-
   const [sortOption, setSortOption] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
 
+  const [favoriteRestaurants, setFavoriteRestaurants] = useState([]);
 
 
 
@@ -84,24 +85,17 @@ function Restaurant() {
   } catch (error) {
     console.error('Error submitting comment:', error);
   }
-
-    var myHeaders = new Headers();
-    myHeaders.append("apikey", "USkeTl8EQKqJCavRABKkLaVQ61j0R6aJ");
     
-    var raw = comments[restaurantId];
-    
-    var requestOptions = {
+    // Call sentiment analysis API
+    const requestOptions = {
       method: 'POST',
-      redirect: 'follow',
-      headers: myHeaders,
-      body: raw
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: commentText }),
     };
-    
-    fetch("https://api.apilayer.com/sentiment/analysis", requestOptions)
-      .then(response => response.text())
-      .then(result => {
 
-        const data = JSON.parse(result);
+    fetch("http://127.0.0.1:5000/predict-sentiment", requestOptions)
+      .then(response => response.json())
+      .then(data => {
         const sentiment = data.sentiment;
 
         console.log(sentiment)
@@ -191,6 +185,37 @@ function Restaurant() {
     return restaurant.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
  
+  const handleAddToFavorite = async (restaurantId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+  
+      // Make request to add restaurant to user's favorites
+      const response = await axios.post(
+        `http://localhost:3001/users/favorites/add`,
+        { restaurantId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      // Update user's favoriteRestaurants array in frontend state
+      setFavoriteRestaurants(prevFavoriteRestaurants => [...prevFavoriteRestaurants, restaurantId]);
+      console.log('Restaurant added to favorites:', response.data);
+    } catch (error) {
+      console.error('Error adding restaurant to favorites:', error);
+      if (error.response && error.response.status === 403) {
+        console.error('You do not have permission to perform this action.');
+      }
+    }
+  };
+  
+  
+  
   
  
   
@@ -209,6 +234,7 @@ function Restaurant() {
           <div className="topnav-right">
                <Link to="/login">Login</Link>
                <Link to="/register">Register</Link>
+               <Link to="/profile">Profile</Link>
              </div>
     
         </div>
@@ -301,18 +327,18 @@ function Restaurant() {
                     <div className="name">
                         {restaurant.TotalNegativeComments}
                       </div>
-                  </div>       
-
+                  </div>    
+                  <button onClick={() => handleAddToFavorite(restaurant._id)}>Add to Favorites</button>
                     
  <form method="post" onSubmit={(e) => handleSubmit(e, restaurant._id)} >
 
 
 
-  
+                    
                     <textarea name="comment" id="" className="card-textarea" rows="2" placeholder="Enter your comment here"  onChange={(e) => handleChange(e, restaurant._id)} value={comments[restaurant._id]} />
                     <button type="submit" className="btn-primary" id="submit-button">Submit</button>
-                     </form>
 
+                     </form>
                      </div>
 
                 

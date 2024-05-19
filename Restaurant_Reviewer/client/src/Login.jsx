@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import'./Login.css'
 function Login(){
 
-    const [email, setEmail]=useState()
-    const [password, setPassword]=useState()
+    const [email, setEmail]=useState('')
+    const [password, setPassword]=useState('')
     const navigate = useNavigate()
 axios.defaults.withCredentials = true;
     const handleSubmit = (e)=>{
@@ -14,9 +14,11 @@ axios.defaults.withCredentials = true;
         axios.post('http://localhost:3001/login', {email,password})
         .then(result => {
             console.log(result)
-            if(result.data ===   "Success") {     
+            if(result.data.message ===   "Success") {   
+                localStorage.setItem('token', result.data.token);  
                 navigate('/')
             }
+            
      })
     
         .catch(err=>console.log(err))
@@ -38,6 +40,7 @@ axios.defaults.withCredentials = true;
                             placeholder="Enter Email"
                             autoComplete="off"
                             name="email"
+                            value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
 
@@ -46,6 +49,7 @@ axios.defaults.withCredentials = true;
                             type="password"
                             placeholder="Enter Password"
                             name="password"
+                            value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
 

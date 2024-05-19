@@ -8,13 +8,14 @@ const Feedbacks = require('./models/Feedback');  // Adjust the import path
 const bcrypt = require('bcrypt')
 const cookieParser = require('cookie-parser')
 const jwt= require('jsonwebtoken')
+const authenticateToken = require('./auth');
 
 const app = express()
 
 app.use(express.json()); // transfer fata from frontend to backend in json format
 app.use(cors({
   origin:["http://localhost:5173"],
-   methods: ["GET", "POST", "PUT"],
+   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true}
   ));
 app.set('view engine', 'ejs');
@@ -33,17 +34,45 @@ mongoose.connect('mongodb://localhost:27017/restaurantreviewer', {
 //if localhost doesn't work try 127.0.0.1
 
 
-app.post('/register', (req, res) => {
-  const {name, email, password} = req.body;
-  bcrypt.hash(password, 10 )
-  .then(hash=>{
-    UserModel.create({name, email, password:hash})
-    .then(user => res.json({status:"OK"}))
-    .catch(err=>res.json(err))
+app.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
+  try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await UserModel.create({ name, email, password: hashedPassword });
+      res.json({ status: "OK" });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal server error" });
+  }
+});
 
-  }).catch(err => res.json(err))
 
-})
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Get token from Authorization header
+  if (!token) return res.status(401).json({ message: 'Token is required' });
+
+  jwt.verify(token, 'jwt-secret-key', (err, decoded) => {
+    if (err) return res.status(403).json({ message: 'Invalid token' });
+
+    req.userId = decoded.email; // Extract user ID from decoded token
+    next();
+  });
+};
+
+
+app.get('/users/profile', verifyToken, async (req, res) => {
+  const userEmail = req.userId; // User email extracted from token
+  try {
+    const user = await UserModel.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
 
 //Create a token that is valid for one day
 app.post('/login', (req,res) => {
@@ -57,7 +86,8 @@ app.post('/login', (req,res) => {
               const token=jwt.sign({email: user.email}, 
                 "jwt-secret-key", {expiresIn:"1d"})
                 res.cookie('token', token)
-                return res.json("Success")
+                return res.json({ message: "Success", token });
+                //return res.json("Success")
 
 
 
@@ -74,6 +104,22 @@ app.post('/login', (req,res) => {
     })
 })
 
+app.delete('/users/profile', async (req, res) => {
+  try {
+    const { email } = req.body; // Assuming the email is sent in the request body
+    // Find the user by email and delete
+    const deletedUser = await UserModel.findOneAndDelete({ email });
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json({ message: 'User profile deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user profile:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 app.post('/feedbacks', async (req, res) => {
   const { restaurantId, comment } = req.body;
 
@@ -89,6 +135,27 @@ app.post('/feedbacks', async (req, res) => {
     res.status(500).json({ error: 'Error saving feedback' });
   }
 });
+
+// Add a restaurant to the user's favorites
+app.post('/users/favorites/add', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { restaurantId } = req.body;
+
+    // Find the user by ID and update their favoriteRestaurants array
+    const user = await User.findById(userId);
+    user.favoriteRestaurants.push(restaurantId);
+    await user.save();
+
+    res.json({ message: 'Restaurant added to favorites' });
+  } catch (error) {
+    console.error('Error adding restaurant to favorites:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 
 //Updating database to increment the value of the positive comments 
 app.put('/restaurants/:id/increment', async (req, res) => {
@@ -213,10 +280,6 @@ app.get('/feedbacks', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
-
-
-
 
 
 //Specifying the port
