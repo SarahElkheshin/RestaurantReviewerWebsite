@@ -1,67 +1,66 @@
-const express = require('express')
-const mongoose=require('mongoose')
-const cors = require('cors')
-const UserModel =require('./models/User')
-const Restaurant = require('./models/Restaurant'); // Import the Restaurant model
-const bodyParser = require ('body-parser')
-const Feedbacks = require('./models/Feedback');  // Adjust the import path
-const bcrypt = require('bcrypt')
-const cookieParser = require('cookie-parser')
-const jwt= require('jsonwebtoken')
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const UserModel = require('./models/User');
+const Restaurant = require('./models/Restaurant');
+const bodyParser = require('body-parser');
+const Feedbacks = require('./models/Feedback');
+const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 const authenticateToken = require('./auth');
 
-const app = express()
+const app = express();
 
-app.use(express.json()); // transfer fata from frontend to backend in json format
+app.use(express.json());
 app.use(cors({
-  origin:["http://localhost:5173"],
-   methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true}
-  ));
-app.set('view engine', 'ejs');
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded ({
-    extended : true
-
+  origin: ["http://localhost:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }));
-app.use(cookieParser())
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost:27017/restaurantreviewer', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })  //connecting to the database connection string
-//mongoose.connect("mongodb://127.0.0.1:27017/employee") 
-//if localhost doesn't work try 127.0.0.1
-
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 app.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
   try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await UserModel.create({ name, email, password: hashedPassword });
-      res.json({ status: "OK" });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await UserModel.create({ name, email, password: hashedPassword });
+    res.json({ status: "OK" });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  UserModel.findOne({ email: email })
+    .then(user => {
+      if (user) {
+        bcrypt.compare(password, user.password, (err, response) => {
+          if (response) {
+            const token = jwt.sign({ email: user.email }, "jwt-secret-key", { expiresIn: "1d" });
+            res.cookie('token', token);
+            return res.json({ message: "Success", token });
+          } else {
+            return res.json("Incorrect Password");
+          }
+        });
+      } else {
+        res.json("User does not exist");
+      }
+    });
+});
 
-const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1]; // Get token from Authorization header
-  if (!token) return res.status(401).json({ message: 'Token is required' });
-
-  jwt.verify(token, 'jwt-secret-key', (err, decoded) => {
-    if (err) return res.status(403).json({ message: 'Invalid token' });
-
-    req.userId = decoded.email; // Extract user ID from decoded token
-    next();
-  });
-};
-
-
-app.get('/users/profile', verifyToken, async (req, res) => {
-  const userEmail = req.userId; // User email extracted from token
+app.get('/users/profile', authenticateToken, async (req, res) => {
+  const userEmail = req.user.email; // User email extracted from token
   try {
     const user = await UserModel.findOne({ email: userEmail });
     if (!user) {
@@ -74,41 +73,10 @@ app.get('/users/profile', verifyToken, async (req, res) => {
   }
 });
 
-//Create a token that is valid for one day
-app.post('/login', (req,res) => {
-    const {email, password} = req.body;
-    UserModel.findOne({email: email})
-    .then(user => {
-        if (user) {
-          bcrypt.compare(password, user.password, (err, response)=>{
-            if(response)
-            {
-              const token=jwt.sign({email: user.email}, 
-                "jwt-secret-key", {expiresIn:"1d"})
-                res.cookie('token', token)
-                return res.json({ message: "Success", token });
-                //return res.json("Success")
-
-
-
-            }else{
-              return res.json("Incorrect Password")
-            }
-          })
-
-         }
-        else{
-            res.json("does not exist")
-        }
-
-    })
-})
-
-app.delete('/users/profile', async (req, res) => {
+app.delete('/users/profile', authenticateToken, async (req, res) => {
   try {
-    const { email } = req.body; // Assuming the email is sent in the request body
-    // Find the user by email and delete
-    const deletedUser = await UserModel.findOneAndDelete({ email });
+    const userEmail = req.user.email;
+    const deletedUser = await UserModel.findOneAndDelete({ email: userEmail });
     if (!deletedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -119,15 +87,9 @@ app.delete('/users/profile', async (req, res) => {
   }
 });
 
-
 app.post('/feedbacks', async (req, res) => {
   const { restaurantId, comment } = req.body;
-
-  const newFeedback = new Feedbacks({
-    restaurantId,
-    comment,
-  });
-
+  const newFeedback = new Feedbacks({ restaurantId, comment });
   try {
     const savedFeedback = await newFeedback.save();
     res.json(savedFeedback);
@@ -136,14 +98,18 @@ app.post('/feedbacks', async (req, res) => {
   }
 });
 
-// Add a restaurant to the user's favorites
 app.post('/users/favorites/add', authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userEmail = req.user.email;
     const { restaurantId } = req.body;
 
-    // Find the user by ID and update their favoriteRestaurants array
-    const user = await User.findById(userId);
+    const user = await UserModel.findOne({ email: userEmail });
+    if (!user) return res.status(404).json({ error: 'User not found.' });
+
+    if (user.favoriteRestaurants.includes(restaurantId)) {
+      return res.status(400).json({ error: 'Restaurant already in favorites.' });
+    }
+
     user.favoriteRestaurants.push(restaurantId);
     await user.save();
 
@@ -154,19 +120,13 @@ app.post('/users/favorites/add', authenticateToken, async (req, res) => {
   }
 });
 
-
-
-
-//Updating database to increment the value of the positive comments 
 app.put('/restaurants/:id/increment', async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Find the restaurant by ID and increment the TotalPositiveComments field by 1
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       id,
-      { $inc: { TotalPositiveComments: 1 } }, // Use $inc to increment by 1
-      { new: true } // Return the updated document
+      { $inc: { TotalPositiveComments: 1 } },
+      { new: true }
     );
 
     if (!updatedRestaurant) {
@@ -176,19 +136,17 @@ app.put('/restaurants/:id/increment', async (req, res) => {
     res.json(updatedRestaurant);
   } catch (error) {
     console.error('Error updating restaurant:', error);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 app.put('/restaurants/:id/incrementNeg', async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Find the restaurant by ID and increment the TotalPositiveComments field by 1
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       id,
-      { $inc: { TotalNegativeComments: 1 } }, // Use $inc to increment by 1
-      { new: true } // Return the updated document
+      { $inc: { TotalNegativeComments: 1 } },
+      { new: true }
     );
 
     if (!updatedRestaurant) {
@@ -198,19 +156,17 @@ app.put('/restaurants/:id/incrementNeg', async (req, res) => {
     res.json(updatedRestaurant);
   } catch (error) {
     console.error('Error updating restaurant:', error);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 app.put('/restaurants/:id/incrementNeutral', async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Find the restaurant by ID and increment the TotalPositiveComments field by 1
     const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       id,
-      { $inc: { TotalNeutralComments: 1 } }, // Use $inc to increment by 1
-      { new: true } // Return the updated document
+      { $inc: { TotalNeutralComments: 1 } },
+      { new: true }
     );
 
     if (!updatedRestaurant) {
@@ -220,56 +176,47 @@ app.put('/restaurants/:id/incrementNeutral', async (req, res) => {
     res.json(updatedRestaurant);
   } catch (error) {
     console.error('Error updating restaurant:', error);
-    res.status(500).json({ error: 'Internal server error.' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
 app.get('/restaurants', async (req, res) => {
-    try {
-      //  const { category } = req.query;
-      //  If a category filter is provided, filter by category, else get all restaurants
-   //     const query = category ? { category } : {};
-    //    const restaurants = await Restaurant.find(query);
-      //  res.json(restaurants);
+  try {
+    const { category, type, district } = req.query;
+    const filters = {};
 
-// Construct the filter object based on provided parameters
-const { category, type, district } = req.query;
-const filters = {};
-
-if (category && category !== 'all') {
-  filters.category = category;
-}
-
-if (type && type !== 'all') {
-  filters.type = type;
-}
-
-if (district && district !== 'all') {
-  filters.district = district;
-}
-
-// Use the filters to query the database
-const restaurants = await Restaurant.find(filters);
-
-res.json(restaurants);
-    } catch (err) {
-      console.log(err);
+    if (category && category !== 'all') {
+      filters.category = category;
     }
-  });
+
+    if (type && type !== 'all') {
+      filters.type = type;
+    }
+
+    if (district && district !== 'all') {
+      filters.district = district;
+    }
+
+    const restaurants = await Restaurant.find(filters);
+    res.json(restaurants);
+  } catch (err) {
+    console.error(err);
+  }
+});
 
 app.get('/restaurants/:id', async (req, res) => {
-    try {
-      const { id } = req.params;
-      const restaurant = await Restaurant.findById(id);
-      if (!restaurant) {
-        return res.status(404).json({ error: 'Restaurant not found.' });
-      }
-      res.json(restaurant);
-    } catch (err) {
-      console.error(err);
+  try {
+    const { id } = req.params;
+    const restaurant = await Restaurant.findById(id);
+    if (!restaurant) {
+      return res.status(404).json({ error: 'Restaurant not found.' });
     }
-  });
-  
+    res.json(restaurant);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 app.get('/feedbacks', async (req, res) => {
   try {
     const { restaurantId } = req.query;
@@ -281,8 +228,7 @@ app.get('/feedbacks', async (req, res) => {
   }
 });
 
+app.listen(3001, () => {
+  console.log("running");
+});
 
-//Specifying the port
-app.listen(3001, ()=>{
-console.log("running")
-})

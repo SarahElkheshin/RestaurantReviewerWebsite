@@ -1,31 +1,53 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Restaurant.css';
 import SearchBar from './SearchBar';
 
-function Restaurant(userId) {
+
+
+function Restaurant({ userId }) { // Corrected the way props are destructured
   const [restaurants, setRestaurants] = useState([]);
-  const [category, setCategory] = useState('all'); 
+  const [category, setCategory] = useState('all');
   const [type, setType] = useState('all');
   const [district, setDistrict] = useState('all');
   const [comments, setComments] = useState({});
-  const [data, setData] = useState({ comment: "" });
-  
-  const [feedbacks, setFeedbacks] = useState({}); 
+  const [feedbacks, setFeedbacks] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
-
   const [favoriteRestaurants, setFavoriteRestaurants] = useState([]);
-
-
-
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
-   // axios.get('http://localhost:3001/restaurants?sort=${sortOption}&order=${sortOrder}')
-   axios
-    .get('http://localhost:3001/restaurants', {
+
+    
+    const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+    if (!token) {
+      // Handle case where user is not authenticated
+      console.error('User is not authenticated');
+      return;
+    }
+  
+    // Fetch the user's profile with authentication token
+    axios.get('http://localhost:3001/users/profile', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(response => {
+        // Assuming the response contains the user's name
+        setUserName(response.data.name);
+      })
+      .catch(error => {
+        console.error('Error fetching user profile:', error);
+        // Handle error (e.g., redirect to login page)
+      });
+
+
+
+// Fetch restaurants based on filter criteria
+    axios.get('http://localhost:3001/restaurants', {
       params: {
         category,
         type,
@@ -36,7 +58,6 @@ function Restaurant(userId) {
     })
       .then(response => {
         setRestaurants(response.data);
-        // Initialize comments for each restaurant
         const initialComments = response.data.reduce((acc, restaurant) => {
           acc[restaurant._id] = "";
           return acc;
@@ -46,47 +67,39 @@ function Restaurant(userId) {
       .catch(error => {
         console.error(error);
       });
-  }, [category, type, district, sortOption, sortOrder]);
-
-  
+  }, [category, type, district, sortOption, sortOrder, searchTerm]); // Added searchTerm to dependencies
 
   const handleChange = (e, restaurantId) => {
-    const name = e.target.name;
     const value = e.target.value;
     setComments({
       ...comments,
       [restaurantId]: value,
     });
   };
-  
 
- const handleSubmit = async (e, restaurantId) => {
+  const handleSubmit = async (e, restaurantId) => {
     e.preventDefault();
     const commentText = comments[restaurantId];
 
-  // Update local state
-  setComments({
-    ...comments,
-    [restaurantId]: "",
-  });
-
-  // Send the comment to the server
-  try {
-    const response = await axios.post('http://localhost:3001/feedbacks', {
-      restaurantId,
-      comment: commentText,
+    setComments({
+      ...comments,
+      [restaurantId]: "",
     });
 
-    // Saving Feedback to MongoDB
-    setFeedbacks({
-      ...feedbacks,
-      [response.data._id]: response.data,
-    });
-  } catch (error) {
-    console.error('Error submitting comment:', error);
-  }
-    
-    // Call sentiment analysis API
+    try {
+      const response = await axios.post('http://localhost:3001/feedbacks', {
+        restaurantId,
+        comment: commentText,
+      });
+
+      setFeedbacks({
+        ...feedbacks,
+        [response.data._id]: response.data,
+      });
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    }
+
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -97,104 +110,56 @@ function Restaurant(userId) {
       .then(response => response.json())
       .then(data => {
         const sentiment = data.sentiment;
-
         console.log(sentiment)
+        let updateEndpoint = '';
 
         if (sentiment === 'positive') {
-          // Make an HTTP request to increment the TotalPositiveComments field
-           axios.put(`http://localhost:3001/restaurants/${restaurantId}/increment`)
-          .then(response => {
-            // Update the React state to reflect the change
-           const updatedRestaurants = restaurants.map(restaurant => {
-             if (restaurant._id === restaurantId) {
-                return { ...restaurant, TotalPositiveComments: restaurant.TotalPositiveComments + 1 };
-              }
-          return restaurant;
-          });
-          setRestaurants(updatedRestaurants);
-          })
-          .catch(error => {
-           console.error('Error updating restaurant:', error);
-         });
-          
-            
+          updateEndpoint = `increment`;
+        } else if (sentiment === 'negative') {
+          updateEndpoint = `incrementNeg`;
+        } else if (sentiment === 'neutral') {
+          updateEndpoint = `incrementNeutral`;
         }
 
-        else if (sentiment === 'negative') {
-          // Make an HTTP request to your backend API to update the restaurant data
-          axios.put(`http://localhost:3001/restaurants/${restaurantId}/incrementNeg`)
-          .then(response=>{
-           
-
-            const updatedRestaurants = restaurants.map(restaurant => {
-              if (restaurant._id === restaurantId) {
-                 return { ...restaurant, TotalNegativeComments: restaurant.TotalNegativeComments + 1 };
-               }
-           return restaurant;
+        if (updateEndpoint) {
+          axios.put(`http://localhost:3001/restaurants/${restaurantId}/${updateEndpoint}`)
+            .then(response => {
+              const updatedRestaurants = restaurants.map(restaurant => {
+                if (restaurant._id === restaurantId) {
+                  const key = `Total${sentiment.charAt(0).toUpperCase() + sentiment.slice(1)}Comments`;
+                  return { ...restaurant, [key]: restaurant[key] + 1 };
+                }
+                return restaurant;
               });
               setRestaurants(updatedRestaurants);
-              
-
-          })            
-        }
-
-        else if (sentiment === 'neutral') {
-          // Make an HTTP request to your backend API to update the restaurant data
-          axios.put(`http://localhost:3001/restaurants/${restaurantId}/incrementNeutral`)
-          .then(response=>{
-            const updatedRestaurants = restaurants.map(restaurant => {
-              if (restaurant._id === restaurantId) {
-                return { ...restaurant, TotalNeutralComments: restaurant.TotalNeutralComments + 1 };
-              }
-              return restaurant;
+            })
+            .catch(error => {
+              console.error('Error updating restaurant:', error);
             });
-            setRestaurants(updatedRestaurants);     
-          })            
         }
-        
-        
-    })
-      .catch(error => console.log('error', error));   
+      })
+      .catch(error => console.log('error', error));
   };
 
   const handleSortChange = (e) => {
-    const value = e.target.value;
-    const [sortOption, sortOrder] = value.split('-');
-    setSortOption(sortOption);
-    setSortOrder(sortOrder);
+    const value = e.target.value.split('-');
+    setSortOption(value[0]);
+    setSortOrder(value[1]);
   };
 
-  const sortedRestaurants = [...restaurants].sort((a, b) => {
-    const nameA = a.name.toLowerCase();
-    const nameB = b.name.toLowerCase();
-  
-    if (sortOrder === 'asc') {
-      return nameA.localeCompare(nameB);
-    } else {
-      return nameB.localeCompare(nameA);
-    }
-  });
-  
+  const filteredRestaurants = restaurants
+    .filter(restaurant => (category === 'all' || restaurant.category === category))
+    .filter(restaurant => restaurant.name.toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const filteredRestaurants = sortedRestaurants.filter(restaurant => {
-    if (category !== 'all' && restaurant.category !== category) {
-      return false;
-    }
-
-    // Check if the restaurant name includes the search term
-    return restaurant.name.toLowerCase().includes(searchTerm.toLowerCase());
-  });
- 
   const handleAddToFavorite = async (restaurantId) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('No token found');
       }
-  
-      // Make request to add restaurant to user's favorites
+
       const response = await axios.post(
-        `http://localhost:3001/users/favorites/add`,
+        'http://localhost:3001/users/favorites/add',
         { restaurantId },
         {
           headers: {
@@ -202,8 +167,7 @@ function Restaurant(userId) {
           },
         }
       );
-  
-      // Update user's favoriteRestaurants array in frontend state
+
       setFavoriteRestaurants(prevFavoriteRestaurants => [...prevFavoriteRestaurants, restaurantId]);
       console.log('Restaurant added to favorites:', response.data);
     } catch (error) {
@@ -213,40 +177,28 @@ function Restaurant(userId) {
       }
     }
   };
-  
-  
-  
-  
- 
-  
- 
-  
-  
+    
 
   return (
     <div className="d-flex flex-column align-items-center bg-custom vh-100" id="12">
       <div className="bg-customfront p-3 rounded">
-        <img className="logo" src='./src/assets/logo.png'/>
-      <h2 className="heading">Restaurant Reviewer</h2>
+        <img className="logo" src='./src/assets/logo.png' alt="Logo" />
+        <h2 className="heading">Restaurant Reviewer</h2>
         <div className="topnav">
           <Link to="/home" className="active">Home</Link>
           <Link to="/dashboard">Dashboard</Link>
-          <div className="topnav-right">
-               <Link to="/login">Login</Link>
-               <Link to="/register">Register</Link>
-               <Link to="/profile">Profile</Link>
-             </div>
-    
+          <div className='rightnav'>
+            <Link to="/profile">Hi, {userName}</Link>
+            <Link to="/">Logout</Link>
+            </div>
+          
         </div>
 
-        {/* Add the SearchBar component */}
         <div className="SearchBar">
-        <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+          <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
         </div>
-       
-        <div className="selection-container">
 
-          {/* Category Selection */}
+        <div className="selection-container">
           <div className="category-selection">
             <label htmlFor="category">Category:</label>
             <select id="category" name="category" value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -257,7 +209,6 @@ function Restaurant(userId) {
             </select>
           </div>
 
-          {/* Type Selection */}
           <div className="type-selection">
             <label htmlFor="type">Type:</label>
             <select id="type" name="type" value={type} onChange={(e) => setType(e.target.value)} >
@@ -269,7 +220,6 @@ function Restaurant(userId) {
             </select>
           </div>
 
-          {/* District Selection */}
           <div className="district-selection">
             <label htmlFor="district">District:</label>
             <select id="district" name="district" value={district} onChange={(e) => setDistrict(e.target.value)}>
@@ -280,8 +230,6 @@ function Restaurant(userId) {
             </select>
           </div>
 
-
-          {/* Add the sorting dropdown */}
           <div className="sort-selection">
             <label htmlFor="sort">Sort By:</label>
             <select id="sort" name="sort" value={`${sortOption}-${sortOrder}`} onChange={handleSortChange}>
@@ -290,60 +238,44 @@ function Restaurant(userId) {
               <option value="TotalPositiveComments-asc">Positive Comments (Low to High)</option>
               <option value="TotalPositiveComments-desc">Positive Comments (High to Low)</option>
             </select>
-          </div>   
-
+          </div>
         </div>
 
-        {/* Restaurants */}
         <div className="row row-cols-1 row-cols-md-4 g-4">
           {filteredRestaurants.map((restaurant, index) => (
             <div key={index} className="col">
               <div className="card">
                 <img className="card-img" src={restaurant.image} alt={restaurant.name} />
+{/* Star icon */}
+<div className="favourite-icon">
+              <button onClick={() => handleAddToFavorite(restaurant._id)}>
+                <img src="./src/assets/heart-icon.png" alt="Favourite" />
+              </button>
+            </div>
+
                 <div className="card-body">
-                <Link to={`/restaurant/${restaurant._id}`} style={{ textDecoration: 'none' }}>
-                  <h5 className="card-title">{restaurant.name}</h5>
-                </Link>
-                <div id="design-cast">
+                  <Link to={`/restaurant/${restaurant._id}`} style={{ textDecoration: 'none' }}>
+                    <h5 className="card-title">{restaurant.name}</h5>
+                  </Link>
+                  <div id="design-cast">
                     <div className="member">
-                         <img src='./src/assets/positive.png' className="img-responsive img-thumbnail emoji" alt="Responsive image" />
+                      <img src='./src/assets/positive.png' className="img-responsive img-thumbnail emoji" alt="Positive" />
                     </div>
-                    <div className="name">
-                      {restaurant.TotalPositiveComments}
+                    <div className="name">{restaurant.TotalPositiveComments}</div>
+                    <div className="member">
+                      <img src='./src/assets/neutral.png' className="img-responsive img-thumbnail emoji" alt="Neutral" />
                     </div>
-
-
-                   <div className="member">
-                          <img src='./src/assets/neutral.png' className="img-responsive img-thumbnail emoji" alt="Responsive image" />
+                    <div className="name">{restaurant.TotalNeutralComments}</div>
+                    <div className="member">
+                      <img src='./src/assets/negative.png' className="img-thumbnail emoji" alt="Negative" />
                     </div>
-
-                  <div className="name">
-                      {restaurant.TotalNeutralComments}
+                    <div className="name">{restaurant.TotalNegativeComments}</div>
                   </div>
-
-                    <div className="member">
-                          <img src='./src/assets/negative.png' className=" img-thumbnail emoji" alt="Responsive image" />
-                    </div>
-                    <div className="name">
-                        {restaurant.TotalNegativeComments}
-                      </div>
-                  </div>    
-                  <button onClick={() => handleAddToFavorite(restaurant._id)}>Add to Favorites</button>
-                    
- <form method="post" onSubmit={(e) => handleSubmit(e, restaurant._id)} >
-
-
-
-                    
-                    <textarea name="comment" id="" className="card-textarea" rows="2" placeholder="Enter your comment here"  onChange={(e) => handleChange(e, restaurant._id)} value={comments[restaurant._id]} />
+                  <form method="post" onSubmit={(e) => handleSubmit(e, restaurant._id)}>
+                    <textarea name="comment" className="card-textarea" rows="2" placeholder="Enter your comment here" onChange={(e) => handleChange(e, restaurant._id)} value={comments[restaurant._id]} />
                     <button type="submit" className="btn-primary" id="submit-button">Submit</button>
-
-                     </form>
-                     </div>
-
-                
-
-               
+                  </form>
+                </div>
               </div>
             </div>
           ))}

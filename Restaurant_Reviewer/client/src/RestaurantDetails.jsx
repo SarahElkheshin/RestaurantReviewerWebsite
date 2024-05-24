@@ -29,21 +29,33 @@ function RestaurantDetails() {
   }, [id]);
 
   return (
-
     <div className="grid">
-      <header className="page-header">    
-          <img className="logo" src='./src/assets/logo.png'/>
-          <h2 className="heading">Restaurant Reviewer</h2>
-          <div className="topnav">
-          <Link to="/home" className="active">Home</Link>
-          <Link to="/dashboard">Dashboard</Link>
-          <div className="topnav-right">
-               <Link to="/login">Login</Link>
-               <Link to="/register">Register</Link>
-             </div>
-    
-        </div>
+      <header className="header">
+        <h2>Restaurant Reviewer</h2>
+        <nav className="navbar">
+          <Link to="/restaurants" className="link">Home</Link>
+          <Link to="/dashboard" className="link">Dashboard</Link>
+          <Link to="/" className="link">Logout</Link>
+        </nav>
       </header>
+  
+      <main className="profile-container">
+        <div className='user-card'>
+          <div className='user-card-img'>
+            <img src={restaurant.image} alt={restaurant.name} />
+          </div>
+          <div className='user-card-info'>
+            <h2>{restaurant.name}</h2>
+            <p><span>Category:</span> {restaurant.category}</p>
+            <p><span>Type:</span> {restaurant.type}</p>
+            <p><span>District:</span> {restaurant.district}</p>
+            <p><span>Total Positive Comments:</span> {restaurant.TotalPositiveComments}</p>
+            <p><span>Total Neutral Comments:</span> {restaurant.TotalNeutralComments}</p>
+            <p><span>Total Negative Comments:</span> {restaurant.TotalNegativeComments}</p>
+          </div>
+        </div>
+      </main>
+  
       <aside className="page-rightbar">
         <div className="flexbox">
           <div className="item">
@@ -52,30 +64,15 @@ function RestaurantDetails() {
                 {feedback.comment}
               </p>
             ))}
-          
           </div>
         </div>
       </aside>
-      <main className="page-main">
-        <div className="content">
-          <img src={restaurant.image} alt={restaurant.name} />
-          <h2>{restaurant.name}</h2>
-          <p>Category: {restaurant.category}</p>
-          <p>Type: {restaurant.type}</p>
-          <p>District: {restaurant.district}</p>
-          <p>Total Positive Comments: {restaurant.TotalPositiveComments}</p>
-          <p>Total Neutral Comments: {restaurant.TotalNeutralComments}</p>
-          <p>Total Negative Comments: {restaurant.TotalNegativeComments}</p>
-
-        </div>
-      </main>
     </div>
   );
+  
+  
+  
+
 }
-
-
-RestaurantDetails.propTypes = {
-  // If you have any prop types, you can define them here
-};
 
 export default RestaurantDetails;

@@ -59,10 +59,9 @@
     color: white;
   }
 
-  .topnav-right {
-    margin-left:1100px;
-    margin-right: 0%;
-  }
+ .rightnav{
+  margin-left: 1000px;
+ }
 
   .selection-container {
     display: flex;
@@ -275,24 +274,32 @@ select:focus {
     left: 120px;
   }
   .name {
-    /* display: flex; */
+
     font-size: 14px;
     font-weight:bolder;
     color: #ffffff;
     font-family: "Lucida Bright"; 
     margin-top: 35px;
     margin-left: -67px;
-    /* margin-top: 35px;
-    margin-left: -30px; */
 
-    /* margin-right: 20px; */
-    /* position: absolute; */
 }
-  /* @media (max-width:480px) {
-    .member {
-      flex: 0 100%
-    }
-  } */
+
+.favourite-icon {
+  position: absolute;
+  top: 10px; /* Adjust the top position as needed */
+  right: 10px; /* Adjust the right position as needed */
+  z-index: 1; /* Ensure the heart icon appears above the image */
+}
+
+.favourite-icon button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.favourite-icon img {
+  width: 30px; /* Adjust the size of the heart icon as needed */
+}
 
 
   

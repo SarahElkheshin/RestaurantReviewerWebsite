@@ -44,11 +44,10 @@ import './Dashboard.css';
     <main className='main-container'>
 
       <div className="topnav">
-        <Link to="/">Home</Link>
+        <Link to="/restaurants">Home</Link>
         <Link to="/dashboard" className="active">Dashboard</Link>
         <div className="topnav-right-dashboard">
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
+          <Link to="/">Logout</Link>
         </div>
       </div>
 

@@ -11,11 +11,12 @@ function Signup()
     const [name,setName]=useState()
     const [email,setEmail]=useState()
     const [password,setPassword]=useState()
+    const [phone,setPhone]=useState()
     const navigate = useNavigate()
 
     const handleSubmit = (e)=>{
         e.preventDefault()
-        axios.post('http://localhost:3001/register', {name, email,password})
+        axios.post('http://localhost:3001/register', {name, email,password,phone})
         .then(result => {console.log(result)
         navigate('/login')
      })
@@ -52,6 +53,15 @@ function Signup()
                             placeholder="Enter Password"
                             name="password"
                             onChange={(e) => setPassword(e.target.value)}
+                        />
+
+                        <label htmlFor="phone"><b>Phone</b></label>
+                        <input
+                            type="text"
+                            placeholder="Enter Phone"
+                            autoComplete="off"
+                            name="name"
+                            onChange={(e) => setPhone(e.target.value)}
                         />
 
                     <button type="submit">Register</button>

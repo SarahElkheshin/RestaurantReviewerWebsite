@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema(
         name: String,
         email: String,
         password: String,
-        phone: String, // Add phone field
+        phone: String,
         favoriteRestaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }]
     }
 );
